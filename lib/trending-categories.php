@@ -53,7 +53,6 @@ if (!class_exists('ClassifiedAppTrendingCategoriesRoutes')) {
 					
                     $item['id'] 	= $term->term_id;
 					$item['slug'] 	= $term->slug;
-					$item['parent'] = $term->parent;
                     $item['title'] 	= $term->name;
 					$item['count'] 	= $term->count;
                     $item  			+= fw_get_db_term_option($term->term_id, $taxonomy);
