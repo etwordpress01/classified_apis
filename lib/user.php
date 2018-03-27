@@ -13,7 +13,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
             $namespace = 'api/v' . $version;
             $base = 'user';
 
-            register_rest_route($namespace, '/' . $base . '/login',
+            register_rest_route($namespace, '/' . $base . '/do_login',
 				array(
 					array(
 						'methods' => WP_REST_Server::READABLE,
@@ -29,7 +29,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 				)
             );
 			
-			register_rest_route($namespace, '/' . $base . '/register',
+			register_rest_route($namespace, '/' . $base . '/do_register',
 				array(
 					array(
 						'methods' => WP_REST_Server::READABLE,
@@ -106,8 +106,8 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 			global $wpdb;
 			$verify_user 		= 'off';
 			$json 				= array();
-			$params 			= $request->get_params();
-
+			//$params 			= $request->get_params();
+			$params 			= !empty( $request['register'] ) ? $request['register'] : array();
 
 			$data_array = array(
 				'username' 			=> esc_html__('Username is required.', 'classified_pro_core'),
@@ -122,7 +122,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 
 			$emailData = array();
 			foreach ($data_array as $key => $value) {
-				if (empty($params['register'][$key])) {
+				if (empty($params[$key])) {
 					$json['type'] = 'error';
 					$json['message'] = $value;
 					echo json_encode($json);
@@ -130,7 +130,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 				}
 
 				if ($key === 'email') {
-					if (!is_email($params['register'][$key])) {
+					if (!is_email($params[$key])) {
 						$json['type'] = 'error';
 						$json['message'] = esc_html__('Please add a valid email address.', 'classified_pro_core');
 						echo json_encode($json);
@@ -139,7 +139,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 				}
 
 				if ($key === 'confirm_password') {
-					if ($params['register']['password'] != $params['register']['confirm_password']) {
+					if ($params['password'] != $params['confirm_password']) {
 						$json['type'] = 'error';
 						$json['message'] = esc_html__('Password does not match.', 'classified_pro_core');
 						echo json_encode($json);
@@ -148,7 +148,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 				}
 			}
 
-			if ( !empty( $params['register']['terms'] ) ) {
+			if ( !empty( $params['terms'] ) ) {
 				$json['type'] = 'error';
 				$json['message'] = esc_html__('Please select term and conditions', 'classified_pro_core');
 				echo json_encode($json);
@@ -156,7 +156,7 @@ if (!class_exists('ClassifiedApp_User_Route')) {
 			}
 
 			//extract post data
-			extract($params['register']);
+			extract($params);
 			$json = array();
 
 			$random_password = $password;
@@ -318,11 +318,11 @@ if (!class_exists('ClassifiedApp_User_Route')) {
          */
         public function user_login($request) {
             $params = $request->get_params();
-            $_POST  = $request->get_params();
-            if (!empty($params['username']) && !empty($params['password'])) {
+
+            if (!empty($request['username']) && !empty($request['password'])) {
                 $creds = array(
-                    'user_login' 	=> $params['username'],
-                    'user_password' => $params['password'],
+                    'user_login' 	=> $request['username'],
+                    'user_password' => $request['password'],
                     'remember' 		=> true
                 );
 
