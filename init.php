@@ -72,6 +72,9 @@ require plugin_dir_path( __FILE__ ) . 'lib/user.php';
 require plugin_dir_path( __FILE__ ) . 'lib/latest-ads.php';
 require plugin_dir_path( __FILE__ ) . 'lib/featured-ads.php';
 require plugin_dir_path( __FILE__ ) . 'lib/trending-categories.php';
+require plugin_dir_path( __FILE__ ) . 'lib/search-listing.php';
+require plugin_dir_path( __FILE__ ) . 'lib/forgot-password.php';
+require plugin_dir_path( __FILE__ ) . 'lib/ad-detail.php';
 require plugin_dir_path( __FILE__ ) . 'lib/configs.php';
 
 /**
