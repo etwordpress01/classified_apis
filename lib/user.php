@@ -315,25 +315,29 @@ if (!class_exists('ClassifiedApp_User_Route')) {
                 );
 
                 $user = wp_signon($creds, false);
-                unset($user->allcaps);
-                unset($user->filter);
-                $user->meta = get_user_meta($user->data->ID, '', true);
-
-                $user->avatar = apply_filters(
-                        'classified_pro_get_media_filter', classified_pro_get_user_avatar(array('width' => 150, 'height' => 150), $user->data->ID), array('width' => 150, 'height' => 150)
-                );
 
                 if (is_wp_error($user)) {
-                    return new WP_Error('wrong-credentials', esc_html__('Wrong username and password.', 'listingo-app'), array('status' => 500));
+					$json['type'] 		= "error";
+					$json['message'] 	= esc_html__("Wrong username and password.", "classified_core");
+					return new WP_REST_Response($json, 200);
                 } else {
-                    $json['type'] = "success";
-                    $json['message'] = esc_html__("Successfully logged in.", "classified_core");
-                    $json['data'] = $user;
+					unset($user->allcaps);
+					unset($user->filter);
+					$user->meta = get_user_meta($user->data->ID, '', true);
+					$user->avatar = apply_filters(
+							'classified_pro_get_media_filter', classified_pro_get_user_avatar(array('width' => 150, 'height' => 150), $user->data->ID), array('width' => 150, 'height' => 150)
+					);
+					
+                    $json['type'] 		= "success";
+                    $json['message'] 	= esc_html__("Successfully logged in.", "classified_core");
+                    $json['data'] 		= $user;
 
                     return new WP_REST_Response($json, 200);
                 }
             } else {
-                return new WP_Error('cant-create', esc_html__('Please add username and password to login.', 'listingo-app'), array('status' => 500));
+				$json['type'] 		= "error";
+				$json['message'] 	= esc_html__("Please add username and password to login.", "classified_core");
+				return new WP_REST_Response($json, 200);
             }
         }
 
